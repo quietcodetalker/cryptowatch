@@ -1,0 +1,36 @@
+version: "3.3"
+
+services:
+  db:
+    image: postgres:12-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=cryptowatch_local
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d cryptowatch_local" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5433:5432"
+  migrate:
+    image: migrate/migrate
+    volumes:
+      - ${PWD}/db/migrations:/migrations
+    command: [ "-path", "/migrations", "-database",  "postgres://postgres:postgres@db:5432/cryptowatch_local?sslmode=disable", "up"]
+    links:
+      - db
+
+  cryptowatch:
+    image: gitlab-registry.ozon.dev/unknownspacewalker/cryptowatch
+    restart: always
+    depends_on:
+      - migrate
+      - db
+    volumes:
+      - ${PWD}/configs/dockercompose.env:/src/configs/local.env
+    ports:
+      - 50051:50051
+      - 8081:8081

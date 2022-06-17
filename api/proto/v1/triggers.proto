@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package cryptowatch;
+
+option go_package = "pkg/api/cryptowatchv1";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+service Triggers {
+  rpc Add(Req) returns (google.protobuf.Empty);
+  rpc Remove(Req) returns (google.protobuf.Empty);
+  rpc Subscribe (google.protobuf.UInt64Value) returns (stream Token);
+}
+
+message Req {
+  uint64 user_id = 1;
+  string ticker = 2;
+}
+
+message Token {
+  string ticker = 1;
+  double price = 2;
+}

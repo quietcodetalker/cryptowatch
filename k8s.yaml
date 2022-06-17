@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: vtkachenko
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grpc-server-deployment
+  namespace: vtkachenko
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: grpc
+  template:
+    metadata:
+      namespace: vtkachenko
+      labels:
+        app: grpc
+    spec:
+      containers:
+        - name: grpc
+          image: gitlab-registry.ozon.dev/unknownspacewalker/cryptowatch:latest
+          imagePullPolicy: Always
+      imagePullSecrets:
+        - name: regcred
+
+#---
+#apiVersion: v1
+#data:
+#  dbuser: ZG9hZG1pbg==
+#  dbpassword: QVZOU19scnpoNUdmY0NxOUlHR1J3NTNm
+#kind: Secret
+#metadata:
+#  creationTimestamp: 2020-01-22T18:41:56Z
+#  name: mysecret
+#  namespace: default
+#  resourceVersion: "164619"
+#  uid: cfee02d6-c137-11e5-8d73-42010af00002
+#type: Opaque

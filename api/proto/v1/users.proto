@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package cryptowatch;
+
+option go_package = "pkg/api/cryptowatchv1";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+//    GenerateOTP(ctx context.Context, username string) error
+//    GetOTP(ctx context.Context, userID uint64) (string, error)
+//    VerifyOTP(ctx context.Context, username string, code string) error
+
+service Users {
+  rpc CreateUser (CreateUserReq) returns (google.protobuf.UInt64Value);
+  rpc Login (LoginReq) returns (google.protobuf.StringValue);
+  rpc GetUser (google.protobuf.StringValue) returns (User);
+  rpc GenerateOTP(google.protobuf.StringValue) returns (google.protobuf.Empty);
+  rpc GetOTP(google.protobuf.UInt64Value) returns (google.protobuf.StringValue);
+  rpc VerifyOTP(VerifyOTPReq) returns (VerifyOTPRes);
+}
+
+
+
+message CreateUserReq {
+  string username = 1;
+  string password = 2;
+  string first_name = 3;
+  string last_name = 4;
+}
+
+message LoginReq {
+  string username = 1;
+  string password = 2;
+}
+
+message User {
+  uint64 id = 1;
+  string username = 2;
+  string first_name = 4;
+  string last_name = 5;
+  google.protobuf.Timestamp create_time = 6;
+}
+
+message VerifyOTPReq {
+  string username = 1;
+  string code = 2;
+}
+
+message VerifyOTPRes {
+  uint64 user_id = 1;
+  string token = 2;
+}
